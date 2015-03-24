@@ -4,7 +4,16 @@
         game: Phaser.Game;
 
         constructor() {
-            this.game = new Phaser.Game(1280, 720, Phaser.AUTO, 'content', {
+
+            var width = window.innerWidth;
+            var heigth = window.innerHeight;
+
+            if( width > 1280 || heigth > width) {
+                width = 1280;
+                heigth = 720;
+            }
+
+            this.game = new Phaser.Game(width, heigth, Phaser.AUTO, 'content', {
                 create: this.create, preload: this.preload
             });
         }
@@ -34,6 +43,7 @@
         create() {
             this.game.state.add("TitleScreenState", Game.States.TitleScreenState, true);
             this.game.state.add("GamePlayState", Game.States.GamePlayState, false);
+            this.game.state.add("GameOverState", Game.States.GameOverState, false);
             this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         }
     }

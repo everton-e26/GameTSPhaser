@@ -17,16 +17,22 @@
         constructor(game: Phaser.Game, x: number, y: number) {
             this.game = game;
             this.walkingSpeed = 0;
-            this.RIGHT_ARROW = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-            this.RIGHT_ARROW.onDown.add(Player.prototype.MoveRigth, this);
 
-            this.LEFT_ARROW = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-            this.LEFT_ARROW.onDown.add(Player.prototype.MoveLessRight, this);
+            //if (game.device.desktop) {
+            //this.RIGHT_ARROW = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+            //this.RIGHT_ARROW.onDown.add(Player.prototype.MoveRigth, this);
+            //this.LEFT_ARROW = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+            //this.LEFT_ARROW.onDown.add(Player.prototype.MoveLessRight, this);
+            //}
+            //else {
+            this.game.input.onTap.add(Player.prototype.MoveRigth, this);
+            this.game.input.onHold.add(Player.prototype.MoveLessRight, this);
+            //}
 
             this.ESCAPE = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
             this.ESCAPE.onDown.add(Player.prototype.GameOver, this);
 
-            super(game, x, y, "HERO_WAKING", 0);
+            super(game, x, y, "HERO_WALKING", 0);
 
             this.anchor.set(0.0, 1.0);
             this.StartIdle();
@@ -35,6 +41,13 @@
         update() {
             if (this.playerState == PlayerState.WALKING) {
                 this.x += (this.walkingSpeed / Player.MAX_SPEED) * (60 / this.game.time.elapsedMS);
+
+                //get the stage 
+                //knowning the myscene is the 0 index on game stage list;
+                var stageWidth = this.game.stage.getChildAt(0).getBounds().width;
+                if (this.x > stageWidth * .75) {
+                    this.x = stageWidth * .25;
+                }
             }
         }
 
@@ -67,7 +80,7 @@
         }
 
         MoveLessRight() {
-            
+
             if (this.playerState != PlayerState.IDLE) {
                 this.walkingSpeed--;
                 if (this.walkingSpeed > 0) {
@@ -80,6 +93,7 @@
         }
 
         GameOver() {
+            this.game.state.start("GameOverState");
 
         }
     }
